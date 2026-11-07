@@ -1,27 +1,28 @@
 # Tic-Tac-Toe
 
-A browser-based Tic-Tac-Toe game built with **React and Django**, featuring an AI-powered computer opponent with multiple difficulty levels.
+A browser-based Tic-Tac-Toe application built with **React and Django**, featuring an AI-powered computer opponent with multiple difficulty levels.
 
-The application combines a React frontend with a Django REST API backend to manage game sessions, player moves, computer decisions and game state.
+The application combines a React frontend with a Django REST API backend to handle game sessions, player moves, computer decisions and game state persistence.
 
 ## Features
 
 - **Play against the computer:** Challenge an AI opponent in a classic Tic-Tac-Toe game.
 - **Multiple difficulty levels:** Choose between Easy, Medium, Hard and Impossible.
-- **AI-powered opponent:** The computer uses the Minimax algorithm to evaluate possible moves and make strategic decisions, with randomized behavior at lower difficulty levels.
+- **AI-powered opponent:** The computer uses the Minimax algorithm to evaluate possible moves and make strategic decisions.
+- **Adjustable AI difficulty:** Lower difficulty levels introduce randomized moves, while higher levels favor optimal decisions.
 - **Dynamic player assignment:** The player and computer are randomly assigned X or O.
-- **Turn management:** The backend tracks whose turn it is and prevents moves when it is not the player's turn.
-- **Game state persistence:** Game sessions and board states are stored using Django's database-backed session system and SQLite.
+- **Turn management:** The backend tracks game turns and validates whose turn it is.
+- **Session-based gameplay:** Game state is associated with individual Django sessions.
 - **Game management:** Start a game, replay, change difficulty or abandon an ongoing game.
-- **Responsive interface:** A React frontend built with Material UI.
+- **WebSocket support:** Includes a Django Channels consumer and WebSocket routing for game-related communication.
 
 ## Technology Stack
 
 ### Frontend
 - React 18
-- React Router
+- React Router 6
 - Material UI (MUI)
-- Webpack
+- Webpack 5
 - Babel
 
 ### Backend
@@ -31,17 +32,24 @@ The application combines a React frontend with a Django REST API backend to mana
 - Django Channels
 - SQLite
 
-### Architecture
+### Development and Configuration
+- Node.js and npm
+- Python virtual environments
+- python-dotenv for environment variable management
+- Git
 
-The application follows a frontend/backend architecture:
+## Architecture
 
-- React handles the user interface, navigation, board rendering and player interactions.
-- Django manages application routing, game sessions and persistence.
-- Django REST Framework exposes endpoints for game setup, player moves and computer moves.
-- The computer opponent uses the Minimax algorithm to evaluate available moves.
-- Django Channels provides a WebSocket consumer and routing endpoint for game communication.
+The application follows a frontend/backend architecture.
 
-The current React gameplay flow communicates with the backend through HTTP API requests.
+- **React:** Handles the user interface, navigation, board rendering and player interactions.
+- **Django:** Manages application routing, game sessions and persistence.
+- **Django REST Framework:** Exposes API endpoints for game setup, player moves and computer moves.
+- **Django Channels:** Provides WebSocket routing and a game consumer.
+- **Minimax algorithm:** Evaluates possible game outcomes and helps the computer select strategic moves.
+- **SQLite:** Stores game records and session data.
+
+The current React gameplay flow communicates with the backend through HTTP API requests. Although WebSocket functionality is defined in the backend, it is not currently the primary communication mechanism used by the frontend.
 
 ## Project Structure
 
@@ -81,8 +89,11 @@ tictactoe/
 │   ├── urls.py
 │   └── wsgi.py
 │
+├── requirements.txt
 ├── manage.py
-└── .gitignore
+├── .env.example
+├── .gitignore
+└── README.md
 ```
 
 ## Getting Started
@@ -104,15 +115,13 @@ git clone https://github.com/jaeyy101/tictactoe.git
 cd tictactoe
 ```
 
-### 2. Set up the Python environment
-
-Create a virtual environment:
+### 2. Create a Python virtual environment
 
 ```bash
 python -m venv venv
 ```
 
-Activate it.
+Activate the environment.
 
 **Windows:**
 
@@ -132,28 +141,58 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Apply database migrations
+### 4. Configure environment variables
+
+The application uses environment variables to manage sensitive configuration, including Django's secret key.
+
+Create a `.env` file in the project root.
+
+You can use `.env.example` as a starting point:
+
+```bash
+# Windows
+copy .env.example .env
+```
+
+```bash
+# macOS / Linux
+cp .env.example .env
+```
+
+Generate a Django secret key:
+
+```bash
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+Open `.env` and replace the placeholder:
+
+```env
+SECRET_KEY=your-generated-secret-key
+```
+
+**Important:** Never commit your `.env` file or expose its contents publicly. The `.env` file is excluded through `.gitignore`.
+
+### 5. Apply database migrations
 
 ```bash
 python manage.py migrate
 ```
 
-### 5. Install frontend dependencies
-
-Navigate to the frontend directory:
+### 6. Install frontend dependencies
 
 ```bash
 cd frontend
 npm install
 ```
 
-### 6. Build the frontend
+### 7. Build the frontend
 
 ```bash
 npm run build
 ```
 
-This generates the frontend JavaScript bundle used by the Django application.
+This generates the frontend JavaScript bundle required by the Django application.
 
 Return to the project root:
 
@@ -161,7 +200,7 @@ Return to the project root:
 cd ..
 ```
 
-### 7. Start the development server
+### 8. Start the development server
 
 ```bash
 python manage.py runserver
@@ -189,15 +228,17 @@ The backend exposes the following REST API endpoints under `/api/`:
 | `/api/player-move` | PUT | Submit a player's move. |
 | `/api/computer-move` | PUT | Request the computer's next move. |
 
-### WebSocket
+### WebSocket Endpoint
 
-The project also defines a Django Channels WebSocket endpoint:
+The backend also defines a Django Channels WebSocket endpoint:
 
 ```text
 /ws/game/
 ```
 
-The WebSocket consumer handles game-related messages, including player moves and computer moves. The current React gameplay implementation primarily uses the REST API.
+The WebSocket consumer handles game-related messages, including player moves and computer moves.
+
+The current frontend gameplay implementation primarily uses the REST API.
 
 ## Game Logic
 
@@ -205,12 +246,12 @@ The computer opponent uses the **Minimax algorithm**, a decision-making algorith
 
 The algorithm evaluates possible game outcomes and selects moves based on their potential scores.
 
-Difficulty levels modify how frequently the computer chooses a random move instead of following the optimal Minimax strategy:
+The available difficulty levels influence how frequently the computer chooses randomized moves instead of strategic Minimax decisions:
 
 - **Easy:** Mostly randomized moves.
 - **Medium:** A mixture of randomized and strategic moves.
 - **Hard:** Primarily strategic moves.
-- **Impossible:** Uses the strategic Minimax algorithm without intentionally randomized moves.
+- **Impossible:** Uses Minimax without intentionally randomized moves.
 
 ## Future Improvements
 
