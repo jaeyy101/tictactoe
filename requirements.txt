@@ -1,5 +1,7 @@
 django
 djangorestframework
-channels["daphne"]
+channels[daphne]
 redis
 channels-redis
+python-dotenv
+psycopg2-binary
