@@ -13,6 +13,7 @@ redis_client = redis.Redis(
     db=int(os.getenv("REDIS_DB", 0)),
     password=os.getenv("REDIS_PASSWORD") or None,
     decode_responses=True,
+    socket_timeout=5,
 )
 
 GAME_ROOM_ONLINE_PLAYERS_KEY = "game_room:{}"

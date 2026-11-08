@@ -20,8 +20,9 @@ export default function PlayComputer(props) {
   const [alertActive, setAlertActive] = useState(false);
   const [pattern, setPattern] = useState([]);
 
+  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
   const port = window.location.port ? `:${window.location.port}` : "";
-  const wsURL = `ws://${window.location.hostname}${port}/ws/play-computer/`;
+  const wsURL = `${protocol}://${window.location.hostname}${port}/ws/play-computer/`;
   const {
     getWebSocket,
     sendMessage,

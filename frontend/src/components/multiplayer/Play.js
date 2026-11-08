@@ -220,7 +220,8 @@ export default function PlayMultiplayer(props) {
   }
 
   const port = window.location.port ? `:${window.location.port}` : "";
-  const wsURL = `ws://${window.location.hostname}${port}/ws/play-multiplayer/${roomCode}`;
+  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+  const wsURL = `${protocol}://${window.location.hostname}${port}/ws/play-multiplayer/${roomCode}`;
   const { sendJsonMessage } = useWebSocket(
     wsURL,
     {
