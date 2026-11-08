@@ -219,9 +219,10 @@ export default function PlayMultiplayer(props) {
     });
   }
 
+  const port = window.location.port ? `:${window.location.port}` : "";
+  const wsURL = `ws://${window.location.hostname}${port}/ws/play-multiplayer/${roomCode}`;
   const { sendJsonMessage } = useWebSocket(
-    // Use window.location.hostname in deployment
-    `ws://localhost:8000/ws/play-multiplayer/${roomCode}`,
+    wsURL,
     {
       onOpen: (e) => {
         setErrorInfo({ data: { show: false, message: null } });

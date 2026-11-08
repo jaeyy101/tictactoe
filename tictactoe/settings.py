@@ -76,10 +76,21 @@ TEMPLATES = [
 ]
 
 ASGI_APPLICATION = "tictactoe.asgi.application"
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-    }
+        "CONFIG": {
+            "hosts": [
+                {
+                    "host": os.getenv("REDIS_HOST", "localhost"),
+                    "port": int(os.getenv("REDIS_PORT", 6379)),
+                    "db": int(os.getenv("REDIS_DB", 0)),
+                    "password": os.getenv("REDIS_PASSWORD") or None,
+                }
+            ],
+        },
+    },
 }
 
 

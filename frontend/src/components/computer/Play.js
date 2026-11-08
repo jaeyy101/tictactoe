@@ -20,13 +20,15 @@ export default function PlayComputer(props) {
   const [alertActive, setAlertActive] = useState(false);
   const [pattern, setPattern] = useState([]);
 
+  const port = window.location.port ? `:${window.location.port}` : "";
+  const wsURL = `ws://${window.location.hostname}${port}/ws/play-computer/`;
   const {
     getWebSocket,
     sendMessage,
     sendJsonMessage,
     lastMessage,
     lastJsonMessage,
-  } = useWebSocket("ws://localhost:8000/ws/play-computer/", {
+  } = useWebSocket(wsURL, {
     onOpen: () => {
       console.log("Connected");
       setAlertActive(false);
