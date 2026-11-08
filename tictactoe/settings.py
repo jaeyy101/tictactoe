@@ -87,7 +87,6 @@ CHANNEL_LAYERS = {
                     "port": int(os.getenv("REDIS_PORT", 6379)),
                     "db": int(os.getenv("REDIS_DB", 0)),
                     "password": os.getenv("REDIS_PASSWORD") or None,
-                    "socket_timeout": 5,
                     "socket_connect_timeout": 5,
                 }
             ],
